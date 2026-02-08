@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   web:
-    image: khan9669/my-e-commerce:tagname
+    image: khan9669/my-e-commerce:latest
     ports:
       - "3000:3000"
     
