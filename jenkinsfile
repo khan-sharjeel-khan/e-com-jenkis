@@ -1,0 +1,42 @@
+pipeline{
+    agent any 
+    
+    stages{
+        stage("Clone code"){
+            steps{
+                echo"Cloning the code"
+                git url:"https://github.com/khan-sharjeel-khan/e-com-jenkis.git", branch: "main"
+            }
+        }
+        stage("build"){
+            steps{
+                echo "Building the Image"
+                sh "docker build -t my-e-commerce ."
+            }
+        }
+        stage("Push to Docker Hub"){
+            steps{
+                echo "Pushing the image to Docker Hub"
+                withCredentials([usernamePassword(credentialsId:"dockerhub",passwordVariable:"dockerhubPass",usernameVariable:"dockerhubUser")]){
+                sh "docker tag my-e-commerce ${env.dockerhubUser}/my-e-commerce:latest "
+                sh "docker login -u ${env.dockerhubUser} -p ${env.dockerhubPass}"
+                sh "docker push ${env.dockerhubUser}/my-e-commerce:latest"
+                }
+            }
+        }
+        stage("Deploy"){
+            steps{
+                echo "Deploying the container"
+                sh "docker-compose down && docker-compose up -d"
+            }
+        }
+        
+        
+        
+    }
+    
+    
+    
+    
+    
+}
